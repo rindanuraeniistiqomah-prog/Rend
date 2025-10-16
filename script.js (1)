@@ -1,0 +1,86 @@
+// ==== PRODUK DERINSHOP ====
+const products = [
+  { id: 1, name: "Keripik Pisang Manis", price: 12000, image: "img.jpg" },
+  { id: 2, name: "Basreng Pedas", price: 15000, image: "https://i.ibb.co/0cpNbNr/basreng.jpg" },
+  { id: 3, name: "Makaroni Kering", price: 13000, image: "https://i.ibb.co/d0nqHbJ/makaroni.jpg" },
+  { id: 4, name: "Kacang Telur Gurih", price: 11000, image: "https://i.ibb.co/HC3mGgV/kacang-telur.jpg" },
+  { id: 5, name: "Cimol Kering", price: 14000, image: "https://i.ibb.co/gR5WGyV/cimol.jpg" },
+  { id: 6, name: "Kerupuk Seblak", price: 16000, image: "https://i.ibb.co/F0f7Cf2/seblak.jpg" },
+];
+
+// ==== TAMPILKAN PRODUK DI DASHBOARD ====
+const productList = document.getElementById("product-list");
+if (productList) {
+  productList.innerHTML = products.map(p => `
+    <div class="product-card">
+      <img src="${p.image}" alt="${p.name}" />
+      <h3>${p.name}</h3>
+      <p>Rp${p.price.toLocaleString()}</p>
+      <button onclick="addToCart(${p.id})">Tambah ke Keranjang 🍪</button>
+    </div>
+  `).join('');
+
+  // Buat bubble animasi
+  const bubbleContainer = document.querySelector(".bubble-container");
+  setInterval(() => {
+    const bubble = document.createElement("div");
+    bubble.classList.add("bubble");
+    const size = Math.random() * 40 + 10;
+    bubble.style.width = `${size}px`;
+    bubble.style.height = `${size}px`;
+    bubble.style.left = `${Math.random() * 100}%`;
+    bubbleContainer.appendChild(bubble);
+    setTimeout(() => bubble.remove(), 8000);
+  }, 400);
+}
+
+// ==== TAMBAH KE KERANJANG ====
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  cart.push(product);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  alert(`${product.name} berhasil ditambahkan!`);
+}
+
+// ==== TAMPILKAN ISI KERANJANG ====
+const cartContainer = document.getElementById("cart-items");
+if (cartContainer) {
+  const hearts = document.querySelector(".heart-container");
+
+  // animasi hati
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.textContent = "💖";
+    heart.style.left = `${Math.random() * 100}%`;
+    heart.style.fontSize = `${Math.random() * 20 + 15}px`;
+    hearts.appendChild(heart);
+    setTimeout(() => heart.remove(), 6000);
+  }, 300);
+
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if (cart.length === 0) {
+    cartContainer.innerHTML = "<p>Keranjang masih kosong 🍬</p>";
+  } else {
+    cartContainer.innerHTML = cart.map((item, i) => `
+      <div class="cart-item">
+        <img src="${item.image}" alt="${item.name}">
+        <div>
+          <h4>${item.name}</h4>
+          <p>Rp${item.price.toLocaleString()}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  document.getElementById("total-price").textContent = `Total: Rp${total.toLocaleString()}`;
+
+  // tombol hapus semua
+  const clearBtn = document.getElementById("clear-cart");
+  clearBtn.addEventListener("click", () => {
+    localStorage.removeItem("cart");
+    location.reload();
+  });
+}
